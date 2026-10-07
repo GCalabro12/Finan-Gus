@@ -11,18 +11,24 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Finan Gus">
 <style>
-:root{--bg:#f6f7f9;--card:#fff;--tx:#1d2330;--mut:#6b7280;--ac:#0f766e;--ac2:#e6f4f2;--ln:#e5e7eb}
-@media (prefers-color-scheme:dark){:root{--bg:#12151b;--card:#1b2029;--tx:#e8eaee;--mut:#9aa3b2;--ac:#2dd4bf;--ac2:#163a37;--ln:#2a313d}}
+:root{--bg:#f6f7f9;--card:#fff;--tx:#1d2330;--mut:#6b7280;--ac:#0f766e;--ac2:#e6f4f2;--ln:#e5e7eb;--ve:#1d4ed8;--ve2:#e8eefc}
+@media (prefers-color-scheme:dark){:root{--bg:#12151b;--card:#1b2029;--tx:#e8eaee;--mut:#9aa3b2;--ac:#2dd4bf;--ac2:#163a37;--ln:#2a313d;--ve:#93b4fd;--ve2:#1c2742}}
 *{box-sizing:border-box}body{margin:0;font-family:system-ui,Segoe UI,sans-serif;background:var(--bg);color:var(--tx)}
-main{max-width:1000px;margin:0 auto;padding:20px 16px 40px}
+main{max-width:1000px;margin:0 auto;padding:16px 16px 40px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13px;color:var(--mut);margin-bottom:10px}
+.ver{background:var(--ac2);color:var(--ac);font-weight:700;padding:3px 8px;border-radius:20px}
 header{display:flex;align-items:center;gap:12px}
 header img{width:44px;height:44px;border-radius:10px}
 h1{margin:0;font-size:26px}.mut{color:var(--mut);font-size:14px}
-.btns{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:18px 0}
+.btns{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:16px 0}
 .btn{display:flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:10px 14px;border-radius:10px;border:1px solid var(--ln);background:var(--card);color:var(--tx);text-decoration:none;font-weight:600;font-size:15px;cursor:pointer}
 .btn.pri{background:var(--ac);border-color:var(--ac);color:#fff}
-.btn[hidden]{display:none}
-.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:18px}
+.btn[hidden],[hidden]{display:none!important}
+.tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:var(--card);border:1px solid var(--ln);border-radius:12px;padding:5px;margin-bottom:14px}
+.tabs button{border:0;border-radius:8px;padding:12px;font-size:16px;font-weight:700;background:transparent;color:var(--mut);cursor:pointer}
+.tabs button.on[data-t=compra]{background:var(--ac);color:#fff}
+.tabs button.on[data-t=venta]{background:var(--ve);color:#fff}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:16px}
 .k{background:var(--card);border:1px solid var(--ln);border-radius:10px;padding:12px}.k b{display:block;font-size:20px;margin-top:4px}
 .bar{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-bottom:12px}
 .bar label{font-size:12px;color:var(--mut);display:flex;flex-direction:column;gap:4px}
@@ -32,31 +38,31 @@ select,input{padding:10px;border-radius:8px;border:1px solid var(--ln);backgroun
 .f .em{font-weight:600}.f .im{font-weight:700;text-align:right;font-variant-numeric:tabular-nums}
 .f .acc{grid-column:1/-1;display:flex;gap:8px;margin-top:6px}
 .f .acc a{flex:1;text-align:center;padding:8px;border-radius:8px;background:var(--ac2);color:var(--ac);text-decoration:none;font-weight:600;font-size:14px}
+body.venta .f .acc a{background:var(--ve2);color:var(--ve)}
 </style>
 </head>
 <body><main>
+<div class="top"><span id="reloj"></span><span class="ver" id="ver"></span></div>
 <header>
  <img src="iconos/icono-192.png" alt="">
  <div><h1>Finan Gus</h1><div class="mut" id="upd"></div></div>
 </header>
 
 <div class="btns">
- <a class="btn pri" id="bDrive" href="https://drive.google.com/drive/folders/1l2nSztB64pz4uTjImbnbeK8-YXFZx8FU" target="_blank">📁 Facturas en Drive</a>
- <a class="btn" href="https://drive.google.com/drive/folders/16jVf4ak_lkrys4qYUT-lRox0aPGIR-mB" target="_blank">📂 2026</a>
- <a class="btn" href="https://drive.google.com/drive/folders/19AlkMT1l7RCok9nrFtrOmtVBZvBVXlqX" target="_blank">📂 2025</a>
+ <a class="btn pri" href="https://drive.google.com/drive/folders/1643623ZJi6ocxIbeuSBSDoZSwt5Old76" target="_blank">📁 Facturas Autónomo GC</a>
  <a class="btn" href="https://drive.google.com/drive/folders/1vOYAay1CMkLLuEoLl0ig2_fS5KdF1zTz" target="_blank">🗂️ Carpeta Finan Gus</a>
  <button class="btn" id="bCsv">⬇️ Descargar listado</button>
  <button class="btn" id="bInst" hidden>📲 Instalar app</button>
 </div>
-
 <div id="login" class="btns" hidden><button class="btn pri" id="bLogin">🔐 Entrar con Google para ver las facturas</button></div>
-<div class="kpis" id="kpis"></div>
 
+<div class="tabs"><button data-t="compra" class="on">🧾 Compras</button><button data-t="venta">💶 Ventas</button></div>
+<div class="kpis" id="kpis"></div>
 <div class="bar">
  <label>Año<select id="anio"></select></label>
  <label>Desde<input type="date" id="desde"></label>
  <label>Hasta<input type="date" id="hasta"></label>
- <label>Emisor<input id="q" placeholder="Buscar…"></label>
+ <label>Nombre<input id="q" placeholder="Buscar…"></label>
 </div>
 <div class="list" id="lista"></div>
 <p class="mut">＊ = descargada automáticamente por Claude desde Gmail.</p>
@@ -65,56 +71,69 @@ select,input{padding:10px;border-radius:8px;border:1px solid var(--ln);backgroun
 <script src="datos.js" onerror="void 0"></script>
 <script>
 // ===== CONFIGURACIÓN =====
-// ID de cliente OAuth de Google Cloud (tipo "Aplicación web", origen https://gcalabro12.github.io)
+const VERSION = 'v1.1';
 const CLIENT_ID = '223862340710-b307c1k6q39q44v2gdcbu17visdan9km.apps.googleusercontent.com';
-const CARPETA_REGISTRO = '1QP5os2404HtZsksEzp1MknJDq94_cYJl'; // Finan Gus/registro
-const CARPETA_FACTURAS = '1l2nSztB64pz4uTjImbnbeK8-YXFZx8FU'; // Finan Gus/Facturas
+const CARPETA_RAIZ = '1643623ZJi6ocxIbeuSBSDoZSwt5Old76'; // 1 Facturas Autonomo GC
 // =========================
-let D={facturas:[]},F=[],LINKS={},vis=[],tok=null;
-const n=s=>parseFloat(String(s).replace(/\./g,'').replace(',','.')),eur=x=>x.toLocaleString('es-ES',{style:'currency',currency:'EUR'});
-const fmt=d=>d.split('-').reverse().join('/');
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-function cargar(datos){
- D=datos;F=D.facturas.sort((a,b)=>b.fecha.localeCompare(a.fecha));
- $('upd').textContent='Actualizado: '+(D.actualizado?fmt(D.actualizado):'—');
- $('anio').innerHTML='<option value="">Todos</option>'+[...new Set(F.map(f=>f.fecha.slice(0,4)))].sort().reverse().map(a=>`<option>${a}</option>`).join('');
- render();
+const eur=x=>x==null?'—':x.toLocaleString('es-ES',{style:'currency',currency:'EUR'});
+const fmt=d=>d.endsWith('-00-00')?d.slice(0,4):d.split('-').reverse().join('/');
+$('ver').textContent=VERSION;
+const reloj=()=>{const d=new Date();$('reloj').textContent=d.toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long',year:'numeric'})+' · '+d.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});};
+reloj();setInterval(reloj,15000);
+
+// Nombre "AAMMDD Emisor Importe€ [＊] .ext" -> objeto factura
+function parsear(nombre,ruta,view,down){
+ const tipo0=/venta/i.test(ruta)?'venta':'compra';
+ const v=nombre.match(/^(?:\dT\s+)?(F(\d{2})\d{4})\s+(?:(\d{2})(\d{2})(\d{2})\s+)?(?:aa\s+)?(.+?)\.[a-z0-9]+$/i); // ventas: "1T F250002 250315 aa Cliente.pdf"
+ if(v)return {fecha:v[3]?`20${v[3]}-${v[4]}-${v[5]}`:`20${v[2]}-00-00`,nombre:`${v[6]} (${v[1]})`,importe:null,claude:false,tipo:tipo0,archivo:nombre,view,down};
+ const m=nombre.match(/^(\d{2})(\d{2})(\d{2})\s+(.+?)\.[a-z0-9]+$/i);if(!m)return null;
+ let resto=m[4].trim(),claude=resto.includes('＊');resto=resto.replace('＊','').trim();
+ let imp=null;const a=resto.match(/([\d.]*\d(?:,\d{1,2})?)\s*(€|e|\$|USD)?\s*(\(.*\))?$/i);
+ if(a&&/€|e|\$|USD|,/.test(a[0])){imp=parseFloat(a[1].replace(/\.(?=\d{3}(\D|$))/g,'').replace(',','.'));resto=resto.slice(0,a.index).trim();}
+ const tipo=/venta/i.test(ruta)?'venta':'compra';
+ return {fecha:`20${m[1]}-${m[2]}-${m[3]}`,nombre:resto||nombre,importe:isNaN(imp)?null:imp,claude,tipo,archivo:nombre,view,down};
 }
-function render(){
+let F=[],tipo='compra',vis=[],tok=null;
+function cargar(lista,actualizado){
+ F=lista.filter(Boolean).sort((a,b)=>b.fecha.localeCompare(a.fecha));
+ $('upd').textContent='Datos: '+(actualizado||'Drive en vivo');render(true);
+}
+function render(nuevoTipo){
+ const base=F.filter(f=>f.tipo===tipo);
+ if(nuevoTipo){$('anio').innerHTML='<option value="">Todos</option>'+[...new Set(base.map(f=>f.fecha.slice(0,4)))].sort().reverse().map(a=>`<option>${a}</option>`).join('');}
  const a=$('anio').value,de=$('desde').value,ha=$('hasta').value,t=$('q').value.toLowerCase();
- vis=F.filter(f=>(!a||f.fecha.startsWith(a))&&(!de||f.fecha>=de)&&(!ha||f.fecha<=ha)&&f.emisor.toLowerCase().includes(t));
- const tot=vis.reduce((s,f)=>s+n(f.importe),0),em={};vis.forEach(f=>em[f.emisor]=(em[f.emisor]||0)+n(f.importe));
+ vis=base.filter(f=>(!a||f.fecha.startsWith(a))&&(!de||f.fecha>=de)&&(!ha||f.fecha<=ha)&&f.nombre.toLowerCase().includes(t));
+ const tot=vis.reduce((s,f)=>s+(f.importe||0),0),em={};vis.forEach(f=>em[f.nombre]=(em[f.nombre]||0)+(f.importe||0));
  const top=Object.entries(em).sort((x,y)=>y[1]-x[1])[0];
- $('kpis').innerHTML=`<div class="k">Facturas<b>${vis.length}</b></div><div class="k">Total<b>${eur(tot)}</b></div><div class="k">Mayor proveedor<b>${top?esc(top[0]):'—'}</b></div><div class="k">Última<b>${vis[0]?fmt(vis[0].fecha):'—'}</b></div>`;
- $('lista').innerHTML=vis.map(f=>{const nom=f.archivo.split('/').pop(),L=LINKS[nom];
-  const ver=L?L.view:'Facturas/'+encodeURI(f.archivo),bajar=L?L.down:ver;
-  return `<div class="f"><div><div class="em">${esc(f.emisor)}</div><div class="mut">${fmt(f.fecha)} · Nº ${esc(f.numero)}</div></div><div class="im">${eur(n(f.importe))}</div>
-  <div class="acc"><a href="${ver}" target="_blank">Ver</a><a href="${bajar}" download="${esc(nom)}" target="_blank">Descargar</a></div></div>`}).join('')||'<p class="mut">Sin facturas para este filtro.</p>';
+ $('kpis').innerHTML=`<div class="k">${tipo==='venta'?'Ventas':'Compras'}<b>${vis.length}</b></div><div class="k">Total<b>${eur(tot)}</b></div><div class="k">${tipo==='venta'?'Mayor cliente':'Mayor proveedor'}<b>${top?esc(top[0]):'—'}</b></div><div class="k">Última<b>${vis[0]?fmt(vis[0].fecha):'—'}</b></div>`;
+ $('lista').innerHTML=vis.map(f=>`<div class="f"><div><div class="em">${esc(f.nombre)}${f.claude?' ＊':''}</div><div class="mut">${fmt(f.fecha)}</div></div><div class="im">${eur(f.importe)}</div>
+  <div class="acc"><a href="${f.view}" target="_blank">Ver</a><a href="${f.down}" download="${esc(f.archivo)}" target="_blank">Descargar</a></div></div>`).join('')||'<p class="mut">Sin facturas para este filtro.</p>';
 }
-async function api(path){const r=await fetch('https://www.googleapis.com/drive/v3/'+path,{headers:{Authorization:'Bearer '+tok}});if(!r.ok)throw new Error(r.status);return r;}
-async function hijos(id,extra=''){const q=encodeURIComponent(`'${id}' in parents and trashed=false${extra}`);
- return (await (await api(`files?q=${q}&pageSize=1000&fields=files(id,name,mimeType,webViewLink,webContentLink)`)).json()).files;}
-async function desdeDrive(){
- $('upd').textContent='Cargando desde Drive…';
- const reg=(await hijos(CARPETA_REGISTRO," and name='facturas.json'"))[0];
- const datos=await (await api(`files/${reg.id}?alt=media`)).json();
- for(const anio of await hijos(CARPETA_FACTURAS," and mimeType='application/vnd.google-apps.folder'"))
-  for(const p of await hijos(anio.id)) LINKS[p.name]={view:p.webViewLink,down:p.webContentLink||p.webViewLink};
- datos.actualizado=datos.actualizado||new Date().toISOString().slice(0,10);
- $('login').hidden=true;cargar(datos);
+document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{tipo=b.dataset.t;document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('on',x===b));document.body.className=tipo;render(true);});
+['anio','desde','hasta','q'].forEach(i=>$(i).addEventListener('input',()=>render()));
+
+// ---- Google Drive ----
+async function api(p){const r=await fetch('https://www.googleapis.com/drive/v3/'+p,{headers:{Authorization:'Bearer '+tok}});if(!r.ok)throw new Error(r.status);return r.json();}
+async function hijos(id){let out=[],pt='';do{const q=encodeURIComponent(`'${id}' in parents and trashed=false`);
+ const r=await api(`files?q=${q}&pageSize=1000&fields=nextPageToken,files(id,name,mimeType,webViewLink,webContentLink)${pt?'&pageToken='+pt:''}`);out=out.concat(r.files);pt=r.nextPageToken;}while(pt);return out;}
+async function recorrer(id,ruta,acc){
+ for(const f of await hijos(id)){
+  if(f.mimeType==='application/vnd.google-apps.folder'){if(!/duplicados/i.test(f.name))await recorrer(f.id,ruta+'/'+f.name,acc);}
+  else if(/\.(pdf|jpe?g|png)$/i.test(f.name)&&/compra|gasto|venta/i.test(ruta))acc.push(parsear(f.name,ruta,f.webViewLink,f.webContentLink||f.webViewLink));
+ }return acc;
 }
-function entrar(){
- const c=google.accounts.oauth2.initTokenClient({client_id:CLIENT_ID,scope:'https://www.googleapis.com/auth/drive.readonly',
-  callback:r=>{if(r.access_token){tok=r.access_token;desdeDrive().catch(e=>$('upd').textContent='Error leyendo Drive ('+e.message+')');}}});
- c.requestAccessToken();
-}
+async function desdeDrive(){$('upd').textContent='Cargando desde Drive…';$('login').hidden=true;cargar(await recorrer(CARPETA_RAIZ,'',[]),null);}
+function entrar(){google.accounts.oauth2.initTokenClient({client_id:CLIENT_ID,scope:'https://www.googleapis.com/auth/drive.readonly',
+ callback:r=>{if(r.access_token){tok=r.access_token;desdeDrive().catch(e=>{$('upd').textContent='Error leyendo Drive ('+e.message+')';$('login').hidden=false;});}}}).requestAccessToken();}
 $('bLogin').onclick=()=>window.google?entrar():alert('Cargando Google, prueba en un segundo');
-['anio','desde','hasta','q'].forEach(i=>$(i).addEventListener('input',render));
-if(window.FINANGUS){cargar(window.FINANGUS);} // copia local (ordenador)
-else{$('login').hidden=false;$('upd').textContent='Entra con tu cuenta de Google';render();}
-$('bCsv').onclick=()=>{const c='Fecha;Emisor;Importe;Nº factura;Archivo\n'+vis.map(f=>[fmt(f.fecha),f.emisor,f.importe,f.numero,f.archivo.split('/').pop()].join(';')).join('\n');
- const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+c],{type:'text/csv'}));a.download='Finan Gus facturas.csv';a.click();};
+
+if(window.FINANGUS){cargar(window.FINANGUS.archivos.map(x=>parsear(x.nombre,x.ruta,x.url,x.url)),window.FINANGUS.actualizado);}
+else{$('login').hidden=false;$('upd').textContent='Entra con tu cuenta de Google';render(true);}
+
+$('bCsv').onclick=()=>{const c='Tipo;Fecha;Nombre;Importe;Archivo\n'+vis.map(f=>[f.tipo,fmt(f.fecha),f.nombre,f.importe==null?'':String(f.importe).replace('.',','),f.archivo].join(';')).join('\n');
+ const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['﻿'+c],{type:'text/csv'}));a.download=`Finan Gus ${tipo}s.csv`;a.click();};
 let pi;addEventListener('beforeinstallprompt',e=>{e.preventDefault();pi=e;$('bInst').hidden=false;});
 $('bInst').onclick=async()=>{if(pi){pi.prompt();await pi.userChoice;pi=null;$('bInst').hidden=true;}};
 if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js');
