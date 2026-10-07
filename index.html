@@ -170,7 +170,6 @@ function pintarAgente(){
  <h3>Facturas descargadas</h3><div class="list">${d.map(x=>`<div class="f clic" data-id="${esc(x.messageId||'')}"><div><div class="em">${esc(x.emisor)} ＊</div><div class="mut">${fmt(x.fecha)} · descargada ${esc(x.fecha_descarga)}</div><div class="mut">📥 de ${esc(x.cuenta||'info@practicaintegral.club')}</div></div><div class="im">${esc(x.importe)} €</div>
  <div class="acc"><span class="tag">Correo ${BORRADOS.includes(x.messageId)?'borrado':esc(x.correo)}</span><span class="mut" style="margin-left:auto">Ver correo ›</span></div>${x.aviso?`<div class="aviso" style="grid-column:1/-1">${esc(x.aviso)}</div>`:''}</div>`).join('')}</div>`;
 }
-$('bGmail').onclick=()=>abrir('mGmail');
 $('bAgente').onclick=()=>{pintarAgente();abrir('mAgente');};
 
 // ---- Lector de correo (Gmail API) ----
