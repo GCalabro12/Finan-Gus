@@ -71,7 +71,7 @@ body.venta .f .acc a{background:var(--ve2);color:var(--ve)}
 <script src="datos.js" onerror="void 0"></script>
 <script>
 // ===== CONFIGURACIÓN =====
-const VERSION = 'v1.1';
+const VERSION = 'v1.2';
 const CLIENT_ID = '223862340710-b307c1k6q39q44v2gdcbu17visdan9km.apps.googleusercontent.com';
 const CARPETA_RAIZ = '1643623ZJi6ocxIbeuSBSDoZSwt5Old76'; // 1 Facturas Autonomo GC
 // =========================
@@ -125,12 +125,20 @@ async function recorrer(id,ruta,acc){
  }return acc;
 }
 async function desdeDrive(){$('upd').textContent='Cargando desde Drive…';$('login').hidden=true;cargar(await recorrer(CARPETA_RAIZ,'',[]),null);}
-function entrar(){google.accounts.oauth2.initTokenClient({client_id:CLIENT_ID,scope:'https://www.googleapis.com/auth/drive.readonly',
- callback:r=>{if(r.access_token){tok=r.access_token;desdeDrive().catch(e=>{$('upd').textContent='Error leyendo Drive ('+e.message+')';$('login').hidden=false;});}}}).requestAccessToken();}
-$('bLogin').onclick=()=>window.google?entrar():alert('Cargando Google, prueba en un segundo');
+const recordar=v=>{try{v?localStorage.setItem('fg_login','1'):localStorage.removeItem('fg_login')}catch(e){}};
+const recordado=()=>{try{return localStorage.getItem('fg_login')==='1'}catch(e){return false}};
+function pedirLogin(){$('login').hidden=false;$('upd').textContent='Entra con tu cuenta de Google';}
+// silencioso=true: reutiliza la sesión de Google sin mostrar ventana; si falla, aparece el botón
+function entrar(silencioso){google.accounts.oauth2.initTokenClient({client_id:CLIENT_ID,scope:'https://www.googleapis.com/auth/drive.readonly',
+ hint:'info@practicaintegral.club',prompt:silencioso?'none':'',
+ error_callback:()=>{recordar(false);pedirLogin();},
+ callback:r=>{if(r.access_token){tok=r.access_token;recordar(true);desdeDrive().catch(e=>{$('upd').textContent='Error leyendo Drive ('+e.message+')';pedirLogin();});}else{recordar(false);pedirLogin();}}}).requestAccessToken();}
+$('bLogin').onclick=()=>window.google?entrar(false):alert('Cargando Google, prueba en un segundo');
 
 if(window.FINANGUS){cargar(window.FINANGUS.archivos.map(x=>parsear(x.nombre,x.ruta,x.url,x.url)),window.FINANGUS.actualizado);}
-else{$('login').hidden=false;$('upd').textContent='Entra con tu cuenta de Google';render(true);}
+else if(recordado()){$('upd').textContent='Conectando con Drive…';render(true);
+ const esperar=()=>window.google?.accounts?entrar(true):setTimeout(esperar,200);esperar();}
+else{pedirLogin();render(true);}
 
 $('bCsv').onclick=()=>{const c='Tipo;Fecha;Nombre;Importe;Archivo\n'+vis.map(f=>[f.tipo,fmt(f.fecha),f.nombre,f.importe==null?'':String(f.importe).replace('.',','),f.archivo].join(';')).join('\n');
  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['﻿'+c],{type:'text/csv'}));a.download=`Finan Gus ${tipo}s.csv`;a.click();};
