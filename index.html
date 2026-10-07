@@ -71,7 +71,7 @@ body.venta .f .acc a{background:var(--ve2);color:var(--ve)}
 <script src="datos.js" onerror="void 0"></script>
 <script>
 // ===== CONFIGURACIÓN =====
-const VERSION = 'v1.2';
+const VERSION = 'v1.3';
 const CLIENT_ID = '223862340710-b307c1k6q39q44v2gdcbu17visdan9km.apps.googleusercontent.com';
 const CARPETA_RAIZ = '1643623ZJi6ocxIbeuSBSDoZSwt5Old76'; // 1 Facturas Autonomo GC
 // =========================
@@ -90,10 +90,11 @@ function parsear(nombre,ruta,view,down){
  if(v)return {fecha:v[3]?`20${v[3]}-${v[4]}-${v[5]}`:`20${v[2]}-00-00`,nombre:`${v[6]} (${v[1]})`,importe:null,claude:false,tipo:tipo0,archivo:nombre,view,down};
  const m=nombre.match(/^(\d{2})(\d{2})(\d{2})\s+(.+?)\.[a-z0-9]+$/i);if(!m)return null;
  let resto=m[4].trim(),claude=resto.includes('＊');resto=resto.replace('＊','').trim();
+ let num='';const nf=resto.match(/^(F\d{6})\s+/i);if(nf){num=nf[1];resto=resto.slice(nf[0].length);} // ventas: "AAMMDD F260001 Cliente 45,00€"
  let imp=null;const a=resto.match(/([\d.]*\d(?:,\d{1,2})?)\s*(€|e|\$|USD)?\s*(\(.*\))?$/i);
  if(a&&/€|e|\$|USD|,/.test(a[0])){imp=parseFloat(a[1].replace(/\.(?=\d{3}(\D|$))/g,'').replace(',','.'));resto=resto.slice(0,a.index).trim();}
  const tipo=/venta/i.test(ruta)?'venta':'compra';
- return {fecha:`20${m[1]}-${m[2]}-${m[3]}`,nombre:resto||nombre,importe:isNaN(imp)?null:imp,claude,tipo,archivo:nombre,view,down};
+ return {fecha:`20${m[1]}-${m[2]}-${m[3]}`,nombre:resto||nombre,num,importe:isNaN(imp)?null:imp,claude,tipo,archivo:nombre,view,down};
 }
 let F=[],tipo='compra',vis=[],tok=null;
 function cargar(lista,actualizado){
@@ -108,7 +109,7 @@ function render(nuevoTipo){
  const tot=vis.reduce((s,f)=>s+(f.importe||0),0),em={};vis.forEach(f=>em[f.nombre]=(em[f.nombre]||0)+(f.importe||0));
  const top=Object.entries(em).sort((x,y)=>y[1]-x[1])[0];
  $('kpis').innerHTML=`<div class="k">${tipo==='venta'?'Ventas':'Compras'}<b>${vis.length}</b></div><div class="k">Total<b>${eur(tot)}</b></div><div class="k">${tipo==='venta'?'Mayor cliente':'Mayor proveedor'}<b>${top?esc(top[0]):'—'}</b></div><div class="k">Última<b>${vis[0]?fmt(vis[0].fecha):'—'}</b></div>`;
- $('lista').innerHTML=vis.map(f=>`<div class="f"><div><div class="em">${esc(f.nombre)}${f.claude?' ＊':''}</div><div class="mut">${fmt(f.fecha)}</div></div><div class="im">${eur(f.importe)}</div>
+ $('lista').innerHTML=vis.map(f=>`<div class="f"><div><div class="em">${esc(f.nombre)}${f.claude?' ＊':''}</div><div class="mut">${fmt(f.fecha)}${f.num?' · Nº '+esc(f.num):''}</div></div><div class="im">${eur(f.importe)}</div>
   <div class="acc"><a href="${f.view}" target="_blank">Ver</a><a href="${f.down}" download="${esc(f.archivo)}" target="_blank">Descargar</a></div></div>`).join('')||'<p class="mut">Sin facturas para este filtro.</p>';
 }
 document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{tipo=b.dataset.t;document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('on',x===b));document.body.className=tipo;render(true);});
