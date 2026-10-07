@@ -30,7 +30,16 @@ h1{margin:0;font-size:26px}.mut{color:var(--mut);font-size:14px}
 .tabs button.on[data-t=venta]{background:var(--ve);color:#fff}
 .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:16px}
 .k{background:var(--card);border:1px solid var(--ln);border-radius:10px;padding:12px}.k b{display:block;font-size:20px;margin-top:4px}
-.bar{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-bottom:12px}
+.bar{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.btns.dos{grid-template-columns:1fr 1fr;margin-top:0}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:flex-end;justify-content:center;z-index:10}
+.caja{background:var(--bg);width:100%;max-width:640px;max-height:88vh;overflow:auto;border-radius:16px 16px 0 0;padding:16px}
+@media(min-width:700px){.modal{align-items:center}.caja{border-radius:16px}}
+.cab{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.cab h2{margin:0;font-size:20px}
+.x{border:0;background:var(--card);color:var(--tx);width:36px;height:36px;border-radius:50%;font-size:16px;cursor:pointer}
+.aviso{background:#fff4e5;color:#8a4b00;border-radius:8px;padding:6px 8px;font-size:13px;margin-top:6px}
+@media (prefers-color-scheme:dark){.aviso{background:#3a2a12;color:#ffc98a}}
+.tag{font-size:12px;font-weight:700;padding:2px 8px;border-radius:20px;background:var(--ac2);color:var(--ac)}
 .bar label{font-size:12px;color:var(--mut);display:flex;flex-direction:column;gap:4px}
 select,input{padding:10px;border-radius:8px;border:1px solid var(--ln);background:var(--card);color:var(--tx);font-size:15px;width:100%}
 .list{display:flex;flex-direction:column;gap:8px}
@@ -58,12 +67,24 @@ body.venta .f .acc a{background:var(--ve2);color:var(--ve)}
 
 <div class="tabs"><button data-t="compra" class="on">🧾 Compras</button><button data-t="venta">💶 Ventas</button></div>
 <div class="kpis" id="kpis"></div>
-<div class="bar">
- <label>Año<select id="anio"></select></label>
- <label>Desde<input type="date" id="desde"></label>
- <label>Hasta<input type="date" id="hasta"></label>
- <label>Nombre<input id="q" placeholder="Buscar…"></label>
+<div class="btns dos">
+ <button class="btn" id="bBuscar">🔍 Buscar facturas <span class="mut" id="filtroInfo"></span></button>
+ <button class="btn" id="bAgente">🤖 Agente: búsqueda en Gmail</button>
 </div>
+<div class="modal" id="mBuscar" hidden><div class="caja">
+ <div class="cab"><h2>🔍 Buscar facturas</h2><button class="x" data-cerrar>✕</button></div>
+ <div class="bar">
+  <label>Año<select id="anio"></select></label>
+  <label>Nombre<input id="q" placeholder="Buscar…"></label>
+  <label>Desde<input type="date" id="desde"></label>
+  <label>Hasta<input type="date" id="hasta"></label>
+ </div>
+ <div class="btns dos"><button class="btn" id="bLimpiar">Limpiar</button><button class="btn pri" data-cerrar>Ver resultados</button></div>
+</div></div>
+<div class="modal" id="mAgente" hidden><div class="caja">
+ <div class="cab"><h2>🤖 Agente de Gmail</h2><button class="x" data-cerrar>✕</button></div>
+ <div id="agente"></div>
+</div></div>
 <div class="list" id="lista"></div>
 <p class="mut">＊ = descargada automáticamente por Claude desde Gmail.</p>
 </main>
@@ -71,8 +92,9 @@ body.venta .f .acc a{background:var(--ve2);color:var(--ve)}
 <script src="datos.js" onerror="void 0"></script>
 <script>
 // ===== CONFIGURACIÓN =====
-const VERSION = 'v1.3';
+const VERSION = 'v1.4';
 const CLIENT_ID = '223862340710-b307c1k6q39q44v2gdcbu17visdan9km.apps.googleusercontent.com';
+const CARPETA_REGISTRO = '1QP5os2404HtZsksEzp1MknJDq94_cYJl'; // Finan Gus/registro
 const CARPETA_RAIZ = '1643623ZJi6ocxIbeuSBSDoZSwt5Old76'; // 1 Facturas Autonomo GC
 // =========================
 const $=id=>document.getElementById(id);
@@ -103,11 +125,12 @@ function cargar(lista,actualizado){
 }
 function render(nuevoTipo){
  const base=F.filter(f=>f.tipo===tipo);
- if(nuevoTipo){$('anio').innerHTML='<option value="">Todos</option>'+[...new Set(base.map(f=>f.fecha.slice(0,4)))].sort().reverse().map(a=>`<option>${a}</option>`).join('');}
+ if(nuevoTipo){$('anio').innerHTML='<option value="">Todos</option>'+[...new Set(base.map(f=>f.fecha.slice(0,4)))].sort().reverse().map(a=>`<option>${a}</option>`).join('');const hoy=String(new Date().getFullYear());if([...$('anio').options].some(o=>o.value===hoy))$('anio').value=hoy;}
  const a=$('anio').value,de=$('desde').value,ha=$('hasta').value,t=$('q').value.toLowerCase();
  vis=base.filter(f=>(!a||f.fecha.startsWith(a))&&(!de||f.fecha>=de)&&(!ha||f.fecha<=ha)&&f.nombre.toLowerCase().includes(t));
  const tot=vis.reduce((s,f)=>s+(f.importe||0),0),em={};vis.forEach(f=>em[f.nombre]=(em[f.nombre]||0)+(f.importe||0));
  const top=Object.entries(em).sort((x,y)=>y[1]-x[1])[0];
+ $('filtroInfo').textContent=[a,t&&'«'+t+'»',(de||ha)&&'fechas'].filter(Boolean).join(' · ');
  $('kpis').innerHTML=`<div class="k">${tipo==='venta'?'Ventas':'Compras'}<b>${vis.length}</b></div><div class="k">Total<b>${eur(tot)}</b></div><div class="k">${tipo==='venta'?'Mayor cliente':'Mayor proveedor'}<b>${top?esc(top[0]):'—'}</b></div><div class="k">Última<b>${vis[0]?fmt(vis[0].fecha):'—'}</b></div>`;
  $('lista').innerHTML=vis.map(f=>`<div class="f"><div><div class="em">${esc(f.nombre)}${f.claude?' ＊':''}</div><div class="mut">${fmt(f.fecha)}${f.num?' · Nº '+esc(f.num):''}</div></div><div class="im">${eur(f.importe)}</div>
   <div class="acc"><a href="${f.view}" target="_blank">Ver</a><a href="${f.down}" download="${esc(f.archivo)}" target="_blank">Descargar</a></div></div>`).join('')||'<p class="mut">Sin facturas para este filtro.</p>';
@@ -115,6 +138,23 @@ function render(nuevoTipo){
 document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{tipo=b.dataset.t;document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('on',x===b));document.body.className=tipo;render(true);});
 ['anio','desde','hasta','q'].forEach(i=>$(i).addEventListener('input',()=>render()));
 
+// ---- Ventanas ----
+const abrir=id=>{$(id).hidden=false;};
+document.querySelectorAll('.modal').forEach(m=>{m.addEventListener('click',e=>{if(e.target===m||e.target.closest('[data-cerrar]'))m.hidden=true;});});
+$('bBuscar').onclick=()=>abrir('mBuscar');
+$('bLimpiar').onclick=()=>{$('anio').value='';$('q').value='';$('desde').value='';$('hasta').value='';render();};
+let AG=null;
+function pintarAgente(){
+ if(!AG){$('agente').innerHTML='<p class="mut">Sin datos del agente todavía.</p>';return;}
+ const ej=AG.ejecuciones||[],u=ej[ej.length-1]||{},d=(AG.descargas||[]).slice().sort((a,b)=>(b.fecha_descarga+b.fecha).localeCompare(a.fecha_descarga+a.fecha));
+ const borr=d.filter(x=>x.correo==='borrado').length,av=d.filter(x=>x.aviso&&x.correo!=='borrado'&&!/inicial/i.test(x.aviso));
+ $('agente').innerHTML=`<div class="kpis"><div class="k">Última revisión<b>${esc(AG.ultima_revision||'—')}</b></div><div class="k">Descargó la última vez<b>${u.descargadas??'—'}</b></div><div class="k">Total descargadas<b>${d.length}</b></div><div class="k">Correos borrados<b>${borr}</b></div></div>
+ ${av.length?`<h3>⚠️ Para que revises (${av.length})</h3>`+av.map(x=>`<div class="aviso"><b>${esc(x.emisor)}</b> · ${fmt(x.fecha)} — ${esc(x.aviso)}</div>`).join(''):''}
+ <h3>Revisiones</h3>${ej.slice().reverse().map(e=>`<div class="mut">${esc(e.fecha)} · revisó ${e.revisados} · descargó ${e.descargadas} · borró ${e.borrados}${e.nota?' — '+esc(e.nota):''}</div>`).join('')}
+ <h3>Facturas descargadas</h3><div class="list">${d.map(x=>`<div class="f"><div><div class="em">${esc(x.emisor)} ＊</div><div class="mut">${fmt(x.fecha)} · descargada ${esc(x.fecha_descarga)}</div></div><div class="im">${esc(x.importe)} €</div>
+ <div class="acc"><span class="tag">Correo ${esc(x.correo)}</span></div>${x.aviso?`<div class="aviso" style="grid-column:1/-1">${esc(x.aviso)}</div>`:''}</div>`).join('')}</div>`;
+}
+$('bAgente').onclick=()=>{pintarAgente();abrir('mAgente');};
 // ---- Google Drive ----
 async function api(p){const r=await fetch('https://www.googleapis.com/drive/v3/'+p,{headers:{Authorization:'Bearer '+tok}});if(!r.ok)throw new Error(r.status);return r.json();}
 async function hijos(id){let out=[],pt='';do{const q=encodeURIComponent(`'${id}' in parents and trashed=false`);
@@ -125,7 +165,8 @@ async function recorrer(id,ruta,acc){
   else if(/\.(pdf|jpe?g|png)$/i.test(f.name)&&/compra|gasto|venta/i.test(ruta))acc.push(parsear(f.name,ruta,f.webViewLink,f.webContentLink||f.webViewLink));
  }return acc;
 }
-async function desdeDrive(){$('upd').textContent='Cargando desde Drive…';$('login').hidden=true;cargar(await recorrer(CARPETA_RAIZ,'',[]),null);}
+async function desdeDrive(){$('upd').textContent='Cargando desde Drive…';$('login').hidden=true;cargar(await recorrer(CARPETA_RAIZ,'',[]),null);
+ try{const q=encodeURIComponent("name='agente.json' and '"+CARPETA_REGISTRO+"' in parents and trashed=false");const r=await api('files?q='+q+'&fields=files(id)');if(r.files[0])AG=await api('files/'+r.files[0].id+'?alt=media');}catch(e){}}
 const recordar=v=>{try{v?localStorage.setItem('fg_login','1'):localStorage.removeItem('fg_login')}catch(e){}};
 const recordado=()=>{try{return localStorage.getItem('fg_login')==='1'}catch(e){return false}};
 function pedirLogin(){$('login').hidden=false;$('upd').textContent='Entra con tu cuenta de Google';}
@@ -136,7 +177,7 @@ function entrar(silencioso){google.accounts.oauth2.initTokenClient({client_id:CL
  callback:r=>{if(r.access_token){tok=r.access_token;recordar(true);desdeDrive().catch(e=>{$('upd').textContent='Error leyendo Drive ('+e.message+')';pedirLogin();});}else{recordar(false);pedirLogin();}}}).requestAccessToken();}
 $('bLogin').onclick=()=>window.google?entrar(false):alert('Cargando Google, prueba en un segundo');
 
-if(window.FINANGUS){cargar(window.FINANGUS.archivos.map(x=>parsear(x.nombre,x.ruta,x.url,x.url)),window.FINANGUS.actualizado);}
+if(window.FINANGUS){AG=window.FINANGUS.agente||null;cargar(window.FINANGUS.archivos.map(x=>parsear(x.nombre,x.ruta,x.url,x.url)),window.FINANGUS.actualizado);}
 else if(recordado()){$('upd').textContent='Conectando con Drive…';render(true);
  const esperar=()=>window.google?.accounts?entrar(true):setTimeout(esperar,200);esperar();}
 else{pedirLogin();render(true);}
