@@ -1,5 +1,5 @@
 // Service worker: permite instalar Finan Gus y abrirlo sin conexión (datos siempre frescos si hay red)
-const CACHE = "finangus-v1.9";
+const CACHE = "finangus-v1.10";
 const BASE = ["./", "./index.html", "./manifest.json", "./iconos/icono-192.png", "./iconos/icono-512.png"];
 self.addEventListener("install", e => e.waitUntil(caches.open(CACHE).then(c => c.addAll(BASE)).then(() => self.skipWaiting())));
 self.addEventListener("activate", e => e.waitUntil(self.clients.claim()));
