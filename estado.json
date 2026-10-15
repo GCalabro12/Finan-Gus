@@ -2,23 +2,23 @@
   "ficha": 1,
   "id": "finan-gus",
   "app": "Finan Gus",
-  "version": "v1.12",
-  "estado": "aviso",
-  "mensaje": "El agente no anota revisiones desde el 07/10",
+  "version": "v1.14",
+  "estado": "ok",
+  "mensaje": "1 factura nueva guardada hoy",
   "cifras": [
     {
-      "valor": 0,
+      "valor": 1,
       "etiqueta": "nuevas hoy"
     },
     {
-      "valor": 9,
+      "valor": 10,
       "etiqueta": "facturas 2026"
     },
     {
-      "valor": 14,
+      "valor": 15,
       "etiqueta": "en el registro"
     }
   ],
-  "actualizado": "2026-10-15T12:28:56+02:00",
+  "actualizado": "2026-10-15T13:36:20+02:00",
   "frecuencia_horas": 24
 }
