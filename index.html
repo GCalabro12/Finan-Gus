@@ -54,6 +54,7 @@ body.venta .f .acc a{background:var(--ve2);color:var(--ve)}
 .pie{text-align:center;margin-top:28px}
 .pi-seal{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:600;letter-spacing:.3px;color:var(--mut);border:1px solid var(--ln);border-radius:999px;padding:6px 12px;text-decoration:none}
 .pi-seal::before{content:"";width:7px;height:7px;border-radius:50%;background:#22c55e}
+.pi-seal a{color:inherit;text-decoration:none}.pi-seal .gp a:hover{text-decoration:underline}
 .pi-txt{text-align:left;line-height:1.3}
 @media (max-width:380px){.pi-seal .gp{display:block;font-size:10.5px}}
 .pi-seal:hover{color:var(--tx);border-color:#22c55e}
@@ -114,13 +115,13 @@ body.venta .f .acc a{background:var(--ve2);color:var(--ve)}
  <div class="cab"><h2>🤖 Agente de Gmail</h2><button class="x" data-cerrar>✕</button></div>
  <div id="agente"></div>
 </div></div>
-<div class="pie"><a class="pi-seal" href="https://practicaintegral.club" target="_blank" rel="noopener"><span class="pi-txt">by Práctica Integral <span class="gp">with Grow Panel</span></span></a></div>
+<div class="pie"><span class="pi-seal"><span class="pi-txt"><a href="https://practicaintegral.club" target="_blank" rel="noopener">by Práctica Integral</a> <span class="gp">with <a href="https://practicaintegral.club/grow-panel/" target="_blank" rel="noopener">Grow Panel</a></span></span></span></div>
 </main>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <script src="datos.js" onerror="void 0"></script>
 <script>
 // ===== CONFIGURACIÓN =====
-const VERSION = 'v1.12';
+const VERSION = 'v1.13';
 const CLIENT_ID = '223862340710-b307c1k6q39q44v2gdcbu17visdan9km.apps.googleusercontent.com';
 const CARPETA_REGISTRO = '1QP5os2404HtZsksEzp1MknJDq94_cYJl'; // Finan Gus/registro
 const CARPETA_RAIZ = '1643623ZJi6ocxIbeuSBSDoZSwt5Old76'; // 1 Facturas Autonomo GC
@@ -216,6 +217,7 @@ $('agente').addEventListener('click',e=>{const it=e.target.closest('.clic');if(i
 
 // ---- Novedades (historial de versiones) ----
 const NOVEDADES=[
+ ['v1.13','15/10/2026',['«Grow Panel» en el sello enlaza a la página que explica qué es.']],
  ['v1.12','15/10/2026',['Sello del pie: «by Práctica Integral with Grow Panel».']],
  ['v1.11','14/10/2026',['Sello «by Práctica Integral» abajo de la pantalla de inicio, con enlace a practicaintegral.club.']],
  ['v1.10','08/10/2026',['Pantalla de Novedades: pulsa la versión arriba a la derecha.']],
