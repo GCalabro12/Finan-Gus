@@ -2,8 +2,7 @@
   "ficha": 1,
   "id": "finan-gus",
   "app": "Finan Gus",
-  "familia": "Gus",
-  "version": "v1.11",
+  "version": "v1.12",
   "estado": "aviso",
   "mensaje": "El agente no anota revisiones desde el 07/10",
   "cifras": [
@@ -20,6 +19,6 @@
       "etiqueta": "en el registro"
     }
   ],
-  "actualizado": "2026-10-15T11:53:17+02:00",
+  "actualizado": "2026-10-15T12:28:56+02:00",
   "frecuencia_horas": 24
 }
