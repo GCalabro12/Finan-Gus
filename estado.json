@@ -2,12 +2,12 @@
   "ficha": 1,
   "id": "finan-gus",
   "app": "Finan Gus",
-  "version": "v1.14",
+  "version": "v1.15",
   "estado": "ok",
-  "mensaje": "1 factura nueva guardada hoy",
+  "mensaje": "Sin facturas nuevas hoy",
   "cifras": [
     {
-      "valor": 1,
+      "valor": 0,
       "etiqueta": "nuevas hoy"
     },
     {
@@ -19,6 +19,6 @@
       "etiqueta": "en el registro"
     }
   ],
-  "actualizado": "2026-10-15T13:36:20+02:00",
+  "actualizado": "2026-10-19T14:15:37+02:00",
   "frecuencia_horas": 24
 }
