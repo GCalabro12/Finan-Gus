@@ -1,6 +1,6 @@
 {
-  "name": "Finan Gus",
-  "short_name": "Finan Gus",
+  "name": "Amable Money",
+  "short_name": "Amable Money",
   "description": "Panel de facturas recibidas",
   "start_url": "./index.html",
   "scope": "./",
@@ -8,7 +8,17 @@
   "background_color": "#f6f7f9",
   "theme_color": "#0f766e",
   "icons": [
-    {"src": "iconos/icono-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable"},
-    {"src": "iconos/icono-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"}
+    {
+      "src": "iconos/icono-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "iconos/icono-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
   ]
 }
