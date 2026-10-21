@@ -1,8 +1,8 @@
 {
   "ficha": 1,
   "id": "finan-gus",
-  "app": "Finan Gus",
-  "version": "v1.15",
+  "app": "Amable Money",
+  "version": "v1.16",
   "estado": "ok",
   "mensaje": "1 factura nueva guardada hoy",
   "cifras": [
@@ -11,14 +11,14 @@
       "etiqueta": "nuevas hoy"
     },
     {
-      "valor": 11,
+      "valor": 12,
       "etiqueta": "facturas 2026"
     },
     {
-      "valor": 16,
+      "valor": 17,
       "etiqueta": "en el registro"
     }
   ],
-  "actualizado": "2026-10-20T09:53:39+02:00",
+  "actualizado": "2026-10-21T10:37:59+02:00",
   "frecuencia_horas": 24
 }
