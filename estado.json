@@ -4,10 +4,10 @@
   "app": "Amable Money",
   "version": "v1.16",
   "estado": "ok",
-  "mensaje": "1 factura nueva guardada hoy",
+  "mensaje": "Sin facturas nuevas hoy",
   "cifras": [
     {
-      "valor": 1,
+      "valor": 0,
       "etiqueta": "nuevas hoy"
     },
     {
@@ -19,6 +19,6 @@
       "etiqueta": "en el registro"
     }
   ],
-  "actualizado": "2026-10-22T12:44:08+02:00",
+  "actualizado": "2026-10-23T09:59:18+02:00",
   "frecuencia_horas": 24
 }
